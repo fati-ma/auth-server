@@ -1,18 +1,18 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const userModel = require('../users/users-schema.js');
+const schema = require('../users/users-schema.js');
 const bcrypt = require('bcrypt');
 const Model = require('../mongo-model.js');
-const SECRET = process.env.SECRET;
+const SECRET = process.env.SECRET || 'thisisasecret';
 
 class User extends Model {
   constructor() {
-    super(userModel);
+    super(schema);
   }
   async save(record) {
     let userObj = await this.get({ username: record.username });
-    console.log('The user object >>>>', userObj);
+    console.log('User object >>>>', userObj);
     console.log('Record >>>>', record);
 
     if (userObj.length == 0) {
@@ -22,23 +22,24 @@ class User extends Model {
       await this.create(record);
       return record;
     } else {
-      console.log('This username exists');
+      console.log('Username already exists :D');
       return Promise.reject();
     }
   }
 
   async authenticateBasic(user, password) {
-    let userObj = await this.get({ username: user });
-    console.log('The user object >>>>', userObj);
-    const valid = await bcrypt.compare(password, userObj[0].password);
-    console.log('Is valid >>>>', valid);
-    return valid ? userObj[0] : Promise.reject();
-  }
-
-  generateToken(user) {
-    const token = jwt.sign({ username: user.username }, SECRET);
+    let record= await this.get({username:user});
+     if (record){
+         await bcrypt.compare(password,record[0].password);
+         return record[0];
+     }
+     return Promise.reject();
+    }
+  
+ 
+  async generateToken(user) {
+    const token = await jwt.sign({ username: user.username }, SECRET);
     return token;
   }
 }
-
 module.exports = new User();

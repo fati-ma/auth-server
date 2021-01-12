@@ -7,22 +7,23 @@ const users = require('../auth/models/users/users-collection.js');
 const basicAuth = require('./middleware/basic-auth-middleware.js');
 
 router.post('/signup', (req, res) => {
-  console.log(req.body);
-  users.save(req.body).then((user) => {
-    res.json(user);
-  //  users.generateToken(user).then(result=> {
-  //           res.status(200).send(result);
-  //       });
-    }).catch(e=> res.status(403).send(e));
-  });
-// });
+  console.log('Username >>>',req.body.username,' Password >>>',req.body.password)
+    users.save(req.body)
+    .then(user=>{
+        users.generateToken(user).then(result=>{
+            console.log('TOKEN >>>',result);
+            res.status(200).send(result);
+        }).catch(err=>next('Invalid Signup'))
+    }).catch(err=>res.status(403).send('Creating user error!!'));
+});
+
 
 router.post('/signin', basicAuth, (req, res) => {
-  // users.authenticate(req.data[0], req.data[1]).then(record => {
-  //   res.json({ token: req.token, user: record });
-  res.json({ token: req.token });
+  res.set('auth',req.token);
+    res.cookie('token',req.token);
+    res.status(200).send({token:req.token,user:req.user});
 });
-// });
+
 
 router.get('/users', (req, res) => {
   users.get().then((results) => {
