@@ -1,14 +1,14 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const userModel = require('../users/users-schema.js');
+const schema = require('../users/users-schema.js');
 const bcrypt = require('bcrypt');
 const Model = require('../mongo-model.js');
 const SECRET = process.env.SECRET;
 
 class User extends Model {
   constructor() {
-    super(userModel);
+    super(schema);
   }
   async save(record) {
     let userObj = await this.get({ username: record.username });
