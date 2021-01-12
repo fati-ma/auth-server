@@ -39,6 +39,24 @@ class User extends Model {
     const token = jwt.sign({ username: user.username }, SECRET);
     return token;
   }
+
+  async authenticateToken(token) {
+    try {
+      const tokenObject = jwt.verify(token, SECRET);
+      console.log('TOKEN OBJECT', tokenObject);
+      const check = await this.get({ username: tokenObject.username });
+      if (check) {
+        console.log('Authentic user');
+        return Promise.resolve(tokenObject);
+      } else {
+        return Promise.reject();
+      }
+    } catch (e) {
+      console.log('Invalid user');
+      return Promise.reject(e.message);
+    }
+  }
+
 }
 
 module.exports = new User();
