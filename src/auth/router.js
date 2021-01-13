@@ -10,10 +10,9 @@ const oauth = require('../auth/middleware/oauth-middleware.js');
 router.post('/signup', (req, res) => {
   console.log(req.body);
   users.save(req.body).then((user) => {
-    res.json(user);
-  }).catch(e=>{
-    res.send(e);
-  })
+    const token = users.generateToken(user);
+    res.json({ user, token });
+  });
 });
 
 router.get('/oauth', oauth, (req, res) => {
