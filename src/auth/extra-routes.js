@@ -9,22 +9,16 @@ router.get('/secret', bearerMiddleware, (req, res) => {
 });
 
 router.get('/read', bearerMiddleware, permissions('read'), (req, res) => {
-  res.send('Route /read worked');
+  res.status(200).send('ACCESSED!: you can access this route if you have the READ capability!! /read worked');
 });
 router.post('/add', bearerMiddleware, permissions('create'), (req, res) => {
-  res.send('Route /create worked');
+  res.status(200).send('ACCESSED!: you can access this route if you have the CREATE capability!! /create worked');
 });
 router.put('/change', bearerMiddleware, permissions('update'), (req, res) => {
-  res.send('Route /update worked');
+  res.status(200).send('ACCESSED!: you can access this route if you have the UPDATE capability!! /update worked');
 });
-
-router.delete(
-  '/remove',
-  bearerMiddleware,
-  permissions('delete'),
-  (req, res) => {
-    res.send('Route /delete worked');
-  }
-);
+router.delete('/remove', bearerMiddleware, permissions('delete'), (req, res) => {
+  res.status(200).send('ACCESSED!: you can access this route if you have the DELETE capability!! /delete worked');
+});
 
 module.exports = router;

@@ -4,6 +4,7 @@ const users = require('../models/users/users-collection.js');
 module.exports = async (req, res, next) => {
   if (!req.headers.authorization) {
     next('Invalid Login');
+    return;
   } else {
 
     try {

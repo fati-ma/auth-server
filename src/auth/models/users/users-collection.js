@@ -12,7 +12,7 @@ class User extends Model {
   }
   async save(record) {
     let userObj = await this.get({ username: record.username });
-    console.log('The user object >>>>', userObj);
+    console.log('__User Object__ ', userObj);
     console.log('Record >>>>', record);
 
     if (userObj.length == 0) {
@@ -29,23 +29,24 @@ class User extends Model {
 
   async authenticateBasic(user, password) {
     let userObj = await this.get({ username: user });
-    console.log('The user object >>>>', userObj);
+    console.log('__User Object__ ', userObj);
     const valid = await bcrypt.compare(password, userObj[0].password);
-    console.log('Is valid >>>>', valid);
+    console.log('Is valid? >>>>', valid);
     return valid ? userObj[0] : Promise.reject();
   }
 
+  //send the capabilities
   generateToken(user) {
-    const token = jwt.sign({ username: user.username }, SECRET);
+    const token = jwt.sign({ username: user.username, capabilities: this.capabilities(user) }, SECRET);
+    console.log('Capabilities >>', this.capabilities(user));
     return token;
   }
 
   async authenticateToken(token) {
     try {
       const tokenObject = jwt.verify(token, SECRET);
-      console.log('TOKEN OBJECT', tokenObject);
-      const check = await this.get({ username: tokenObject.username });
-      if (check) {
+      console.log('__TOKEN OBJECT__', tokenObject);
+      if (tokenObject.username) {
         console.log('Authentic user');
         return Promise.resolve(tokenObject);
       } else {
@@ -53,7 +54,23 @@ class User extends Model {
       }
     } catch (e) {
       console.log('Invalid user');
-      return Promise.reject(e.message);
+      return Promise.reject(e);
+    }
+  }
+
+  capabilities(user) {
+    console.log('capabilities executed');
+    if (user.role === 'admin') {
+      return ['read', 'create', 'update', 'delete'];
+    }
+    if (user.role === 'user') {
+      return ['read'];
+    }
+    if (user.role === 'writer') {
+      return ['read', 'create'];
+    }
+    if (user.role === 'editor') {
+      return ['read', 'create', 'update'];
     }
   }
 
