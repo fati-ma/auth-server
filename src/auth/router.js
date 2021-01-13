@@ -11,7 +11,9 @@ router.post('/signup', (req, res) => {
   console.log(req.body);
   users.save(req.body).then((user) => {
     res.json(user);
-  });
+  }).catch(e=>{
+    res.send(e);
+  })
 });
 
 router.get('/oauth', oauth, (req, res) => {

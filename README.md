@@ -1,4 +1,4 @@
-# Bearer Authorization
+# ACI
 
 ### Author: Fatima Atieh
 
@@ -19,7 +19,11 @@ Start the server: `node index.js`
 
 - POST: http://localhost:3000/signup
 - POST: http://localhost:3000/signin
-- GET: http://localhost:3000/users
+- GET: http://localhost:3000/secret
+- GET: http://localhost:3000/read
+- GET: http://localhost:3000/create
+- GET: http://localhost:3000/update
+- GET: http://localhost:3000/delete
 
 
 ## Test 
